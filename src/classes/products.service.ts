@@ -1,22 +1,41 @@
 import { SERVER } from "../constants.js";
+import type { Product, ProductInsert } from "../interfaces/product.js";
 import type {
-    ProductsResponse,
-    SingleProductResponse,
-    Product,
-    ProductPost
-} from "../interfaces/product.js";
+  ProductsResponse,
+  SingleProductResponse,
+} from "../interfaces/responses.js";
 import { Http } from "./http.class.js";
 
 export class ProductsService {
   #http = new Http();
 
-  async getAll(): Promise<Product[]> {
-    const resp = await this.#http.get<ProductsResponse>(`${SERVER}/products`);
-    return resp.products;
+  async getProducts(
+    page = 1,
+    search = "",
+    sort = "distance",
+    user?: string | null,
+    status?: string | null
+  ): Promise<ProductsResponse> {
+    const params = new URLSearchParams({
+      page: String(page),
+      search,
+      sort,
+    });
+
+    if (status) {
+      params.append("status", status);
+      if (user) {
+        params.append("user", user);
+      }
+    }
+
+    return await this.#http.get<ProductsResponse>(
+      `${SERVER}/products?${params.toString()}`
+    );
   }
 
-  async post(product: ProductPost): Promise<Product> {
-    const resp = await this.#http.post<SingleProductResponse, ProductPost>(
+  async post(product: ProductInsert): Promise<Product> {
+    const resp = await this.#http.post<SingleProductResponse, ProductInsert>(
       `${SERVER}/products`,
       product
     );

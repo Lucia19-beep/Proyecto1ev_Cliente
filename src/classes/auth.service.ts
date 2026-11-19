@@ -2,7 +2,6 @@ import { SERVER } from "../constants";
 import type { TokenResponse, UserResponse } from "../interfaces/responses";
 import { Http } from "./http.class";
 import { MyGeolocation } from "./my-geolocation";
-import { User } from "../interfaces/user";
 
 export interface UserRegister {
   name: string;
@@ -38,5 +37,17 @@ export class AuthService {
       `${SERVER}/auth/register`,
       userData
     );
+  }
+  async checkToken(): Promise<void> {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token");
+    }
+    await this.#http.get<void>(`${SERVER}/auth/validate`);
+  }
+  
+  logout(): void {
+    localStorage.removeItem("token");
+    location.assign("login.html");
   }
 }
