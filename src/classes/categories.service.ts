@@ -1,6 +1,8 @@
-import { SERVER } from "../constants.js";
-import type { CategoriesResponse, Category } from "../interfaces/category.js";
-import { Http } from "./http.class.js";
+import { SERVER } from "../constants";
+import type { Category } from "../interfaces/category";
+import type { CategoriesResponse } from "../interfaces/responses";
+import { Http } from "./http.class";
+
 
 export class CategoriesService {
     #http = new Http();
